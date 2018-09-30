@@ -1,7 +1,10 @@
 package me.richdev.NameNotification;
 
+import me.richdev.NameNotification.Configuration.SettingsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -10,24 +13,48 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
-        log("&aLoading NameNotification...");
+        getLogger().info("Loading NameNotification...");
         // INIT INSTANCE
         instance = this;
-        log("&aLoading instance...");
+        getLogger().info("&aLoading instance...");
 
         // REGISTER LISTENERS
-        log("&aaLoading listener...");
+        getLogger().info("Loading listener...");
         Bukkit.getServer().getPluginManager().registerEvents(new Events(), this);
-        log("&aDone loading NameNotification");
-    }
-
-    public static void log(String msg) {
-        Bukkit.getConsoleSender().sendMessage(msg.replace("&", "§"));
+        getLogger().info("Done loading NameNotification");
     }
 
     public static Main getInstance() {
         return instance;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+        if (cmd.getName().equalsIgnoreCase("namenotification")) {
+
+            if (!sender.hasPermission("NameNotification.admin")) {
+                sender.sendMessage(ChatColor.RED + "Forbidden.");
+                return true;
+            }
+
+            if (args.length == 0) {
+                sender.sendMessage(ChatColor.DARK_AQUA + "Commands for NameNotification:");
+                sender.sendMessage(ChatColor.DARK_AQUA + "/" + label + " reload " + ChatColor.YELLOW + " - Reloads the configuration and plugin.");
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                long start = System.currentTimeMillis();
+                sender.sendMessage(ChatColor.YELLOW + "Trying to reload the plugin.");
+
+                SettingsManager.getConfig().reload();
+                if (SettingsManager.getConfig().<Boolean>get("DoNotTouchMeUnlessAChangeLogOrDeveloperTellsYou.resetConfiguration")) {
+                    SettingsManager.getConfig().reset();
+                }
+
+                sender.sendMessage(ChatColor.GREEN + "Plugin reloaded in: " + (System.currentTimeMillis() - start));
+            }
+        }
+
+        return true;
     }
 
 }

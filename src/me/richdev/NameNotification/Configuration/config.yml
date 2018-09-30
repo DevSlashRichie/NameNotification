@@ -1,0 +1,52 @@
+#
+#
+#     Thanks for using NameNotification, the plugin that allows players to call the attention of their friends.
+#     If you want any question you can contact me on the link below, or on my discord: https://discord.gg/A8CSptq
+#     Plugin created by Ricardo R. M. https://richdev.me/
+#     If you want to donate something go here: https://www.paypal.me/lizms/1usd
+#
+
+
+
+
+
+
+#
+#
+#     Basic Configuration
+#
+#     List of Sounds: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+#     List of Colors: https://minecraft.gamepedia.com/Formatting_codes
+#
+#
+
+DefaultChatColor: r
+
+NotificationDetails:
+  Sound:
+    ID: ORB_PICKUP
+    volume: 10
+    pitch: 1
+  NotificationColor: e
+MultipleSupportOfNamesInAMessage: false # Coming Soon!
+
+
+#
+#   Advanced Configuration
+#
+#   How the system will search if a player is present in the chat.
+#
+#   Modes:
+#    - OPTIMIZED: This is faster and does not use a lot of resource from the CPU
+#       This mode will also recognize things like: Are you ok RichTheLord?
+#    - PRECISE: The system will recognize names even if they have extra characters example:
+#       if a player write: Are you ok RichTheLord1232? will recognize the player.
+#
+#
+
+SearchMode: PRECISE
+
+DoNotTouchMeUnlessAChangeLogOrDeveloperTellsYou:
+  version: 1.0
+  update: false
+  resetConfiguration: false

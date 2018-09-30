@@ -41,8 +41,8 @@ import java.util.logging.Logger;
 
 public abstract class SpigetUpdateAbstract {
 
-    public static final String RESOURCE_INFO = "http://api.org.inventivetalent.update.spiget.spiget.org/v2/resources/%s?ut=%s";
-    public static final String RESOURCE_VERSION = "http://api.org.inventivetalent.update.spiget.spiget.org/v2/resources/%s/versions/latest?ut=%s";
+    public static final String RESOURCE_INFO = "http://api.spiget.org/v2/resources/%s";
+    public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest";
 
     protected final int resourceId;
     protected final String currentVersion;
@@ -103,7 +103,7 @@ public abstract class SpigetUpdateAbstract {
                         callback.upToDate();
                     }
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Failed to get resource info from org.inventivetalent.update.spiget.spiget.org", e);
+                    log.log(Level.WARNING, "Failed to get resource info from spiget.org", e);
                 }
             }
         });

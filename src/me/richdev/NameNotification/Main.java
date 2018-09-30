@@ -7,11 +7,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
 import org.inventivetalent.update.spiget.spiget.SpigetUpdate;
 
 public class Main extends JavaPlugin {
 
     private static Main instance;
+
+    public String message_to_op = null;
 
     @Override
     public void onEnable() {
@@ -25,7 +29,30 @@ public class Main extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new Events(), this);
 
         getLogger().info("Initializing updater...");
-        new SpigetUpdate(this, 61202);
+        SpigetUpdate spigetUpdate = new SpigetUpdate(this, 61202);
+
+        spigetUpdate.setVersionComparator(VersionComparator.SEM_VER);
+        spigetUpdate.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean canAutoDownload) {
+                if (canAutoDownload) {
+                    if (spigetUpdate.downloadUpdate()) {
+                        getLogger().warning("The new version (" + newVersion + ") is now downloaded, you should reload the plugin.");
+                        message_to_op = "The new version (" + newVersion + ") is now downloaded, you should reload the plugin.";
+                    } else {
+                        getLogger().warning("Update download failed, reason is " + spigetUpdate.getFailReason());
+                        message_to_op = "Update download failed, reason is " + spigetUpdate.getFailReason() + ". Here is the download link: " + downloadUrl;
+                    }
+                }
+            }
+
+            @Override
+            public void upToDate() {
+                getLogger().info("You have the latest version :)");
+            }
+        });
+
+
         loadMetrics();
 
         getLogger().info("Done loading NameNotification");

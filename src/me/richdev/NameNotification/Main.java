@@ -1,5 +1,6 @@
 package me.richdev.NameNotification;
 
+import me.richdev.NameNotification.Configuration.ConfigurationVariables;
 import me.richdev.NameNotification.Configuration.SettingsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,7 +18,7 @@ public class Main extends JavaPlugin {
         getLogger().info("Loading NameNotification...");
         // INIT INSTANCE
         instance = this;
-        getLogger().info("&aLoading instance...");
+        getLogger().info("Loading instance...");
 
         // REGISTER LISTENERS
         getLogger().info("Loading listener...");
@@ -25,6 +26,7 @@ public class Main extends JavaPlugin {
 
         getLogger().info("Initializing updater...");
         new SpigetUpdate(this, 61202);
+        loadMetrics();
 
         getLogger().info("Done loading NameNotification");
     }
@@ -60,6 +62,19 @@ public class Main extends JavaPlugin {
         }
 
         return true;
+    }
+
+    private void loadMetrics() {
+        Metrics metrics = new Metrics(this);
+
+        metrics.addCustomChart(new Metrics.SimplePie("SearchMode", ()
+                -> ConfigurationVariables.getInstance().SEARCH_MODE.toString()));
+
+        metrics.addCustomChart(new Metrics.SimplePie("Sound", ()
+                -> ConfigurationVariables.getInstance().SOUND.toString()));
+
+        metrics.addCustomChart(new Metrics.SimplePie("Color", ()
+                -> ConfigurationVariables.getInstance().NOTIFICATION_COLOR.toString()));
     }
 
 }

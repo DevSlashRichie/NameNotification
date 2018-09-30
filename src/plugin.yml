@@ -1,5 +1,5 @@
 name: NameNotification
-version: 1.2.4
+version: 1.2.5
 main: me.richdev.NameNotification.Main
 author: RichTheLord
 description: A plugin that notificates you when a player send you a message in the chat.

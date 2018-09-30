@@ -52,6 +52,8 @@ public class Main extends JavaPlugin {
                 long start = System.currentTimeMillis();
                 sender.sendMessage(ChatColor.YELLOW + "Trying to reload the plugin.");
 
+                ConfigurationVariables.getInstance().load();
+
                 SettingsManager.getConfig().reload();
                 if (SettingsManager.getConfig().<Boolean>get("DoNotTouchMeUnlessAChangeLogOrDeveloperTellsYou.resetConfiguration")) {
                     SettingsManager.getConfig().reset();

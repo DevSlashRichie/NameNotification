@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.inventivetalent.update.spiget.spiget.SpigetUpdate;
 
 public class Main extends JavaPlugin {
 
@@ -21,6 +22,10 @@ public class Main extends JavaPlugin {
         // REGISTER LISTENERS
         getLogger().info("Loading listener...");
         Bukkit.getServer().getPluginManager().registerEvents(new Events(), this);
+
+        getLogger().info("Initializing updater...");
+        new SpigetUpdate(this, 61202);
+
         getLogger().info("Done loading NameNotification");
     }
 

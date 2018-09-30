@@ -7,9 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.inventivetalent.update.spiget.UpdateCallback;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
-import org.inventivetalent.update.spiget.spiget.SpigetUpdate;
 
 public class Main extends JavaPlugin {
 
@@ -29,9 +26,11 @@ public class Main extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new Events(), this);
 
         getLogger().info("Initializing updater...");
+        /*
         SpigetUpdate spigetUpdate = new SpigetUpdate(this, 61202);
 
-        spigetUpdate.setVersionComparator(VersionComparator.SEM_VER);
+
+        spigetUpdate.setVersionComparator(VersionComparator.EQUAL);
         spigetUpdate.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean canAutoDownload) {
@@ -51,7 +50,7 @@ public class Main extends JavaPlugin {
                 getLogger().info("You have the latest version :)");
             }
         });
-
+*/
 
         loadMetrics();
 

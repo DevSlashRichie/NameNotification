@@ -14,19 +14,11 @@ public class Events implements Listener {
 
     private final static Pattern pattern = Pattern.compile("(§.)");
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void chat(AsyncPlayerChatEvent e) {
-        e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
-    }
-
    @EventHandler(priority = EventPriority.MONITOR)
    public void chatListener(AsyncPlayerChatEvent e) {
 
        String message = e.getMessage();
        Player player = e.getPlayer();
-
-       //player.sendMessage("Message: " + message);
-       //player.sendMessage("Format: " + format);
 
        if(!message.contains(player.getName()))
             return;
@@ -36,19 +28,13 @@ public class Events implements Listener {
        StringBuilder stringBuilder = new StringBuilder();
 
        String lastCode = ChatColor.RESET + "";
-       boolean isName = false;
        for (String s : message.split(" ")) {
            if(!s.contains(player.getName())) {
-               if (isName) {
-                   s = lastCode + s;
-               }
                Matcher matcher = pattern.matcher(s);
                if(matcher.find()) {
                    lastCode = matcher.group();
                }
-               isName = false;
            } else {
-               isName = true;
                s = s.replaceAll("(RichTheLord)", "$1" + lastCode);
            }
 

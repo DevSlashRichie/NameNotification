@@ -107,7 +107,7 @@ public class Main extends JavaPlugin {
                     SettingsManager.getConfig().reset();
                 }
 
-                sender.sendMessage(ChatColor.GREEN + "Plugin reloaded in: " + (System.currentTimeMillis() - start));
+                sender.sendMessage(ChatColor.GREEN + "Plugin reloaded in: " + (System.currentTimeMillis() - start) + " milliseconds.");
             }
         }
 

@@ -60,7 +60,6 @@ public abstract class VersionComparator {
             return false;
         }
     };
-
     /**
      * Same as {@link VersionComparator#SEM_VER}, but supports version names with '-SNAPSHOT' prefixes
      */

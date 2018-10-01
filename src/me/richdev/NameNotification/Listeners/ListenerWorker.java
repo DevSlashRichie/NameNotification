@@ -1,28 +1,30 @@
-package me.richdev.NameNotification;
+package me.richdev.NameNotification.Listeners;
 
 import me.richdev.NameNotification.Configuration.ConfigurationVariables;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Events implements Listener {
+public abstract class ListenerWorker {
 
     private final static Pattern pattern = Pattern.compile("(§.)");
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void chatListener(AsyncPlayerChatEvent e) {
+    private String message;
+    private String format;
+    private Player player;
+    private Set<Player> recipients;
 
-        String message = e.getMessage();
-        Player player = e.getPlayer();
+    ListenerWorker(String message, String format, Player player, Set<Player> recipients) {
+        this.message = message;
+        this.format = format;
+        this.player = player;
+        this.recipients = recipients;
+    }
 
+    void chatHandler() {
         Player target = null;
 
         if (ConfigurationVariables.getInstance().SEARCH_MODE == ConfigurationVariables.SearchMode.OPTIMIZED) {
@@ -30,7 +32,7 @@ public class Events implements Listener {
                 target = Bukkit.getPlayer(s.replaceAll("[^\\w\\d]+", ""));
             }
         } else if (ConfigurationVariables.getInstance().SEARCH_MODE == ConfigurationVariables.SearchMode.PRECISE) {
-            for (Player recipient : e.getRecipients()) {
+            for (Player recipient : recipients) {
                 if (message.contains(recipient.getName())) {
                     target = recipient;
                     break;
@@ -44,9 +46,8 @@ public class Events implements Listener {
         if (target == player)
             return;
 
-        e.getRecipients().remove(player);
-        e.getRecipients().remove(target);
-        e.setCancelled(true);
+        recipients.remove(player);
+        recipients.remove(target);
 
         message = message.replace(target.getName(), ConfigurationVariables.getInstance().NOTIFICATION_COLOR + target.getName());
         StringBuilder stringBuilder = new StringBuilder();
@@ -55,7 +56,7 @@ public class Events implements Listener {
         for (String s : message.split(" ")) {
             if (!s.contains(target.getName())) {
                 Matcher matcher = pattern.matcher(s);
-                if(matcher.find()) {
+                if (matcher.find()) {
                     lastCode = matcher.group();
                 }
             } else {
@@ -66,22 +67,12 @@ public class Events implements Listener {
         }
 
         // SEND MESSAGES AND SOUND
-
-        String toSend = String.format(e.getFormat(), player.getName(), stringBuilder.toString());
-
-        target.sendMessage(toSend);
-        player.sendMessage(toSend);
-
         target.playSound(target.getLocation(), ConfigurationVariables.getInstance().SOUND,
                 ConfigurationVariables.getInstance().VOLUME, ConfigurationVariables.getInstance().PITCH);
-
+        sendMessage(recipients, message, format, target, player, stringBuilder.toString());
     }
 
-    @EventHandler()
-    public void join(PlayerJoinEvent e) {
-        if (e.getPlayer().hasPermission("NameNotification.admin") || e.getPlayer().isOp()) {
-            if (Main.getInstance().message_to_op != null)
-                e.getPlayer().sendMessage(ChatColor.RED + Main.getInstance().message_to_op);
-        }
-    }
+    public abstract void sendMessage(Set<Player> recipients, String message, String format, Player target, Player player, String finalMessage);
+
+
 }

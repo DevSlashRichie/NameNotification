@@ -2,17 +2,25 @@ package me.richdev.NameNotification;
 
 import me.richdev.NameNotification.Configuration.ConfigurationVariables;
 import me.richdev.NameNotification.Configuration.SettingsManager;
+import me.richdev.NameNotification.Listeners.Listener_DELUXE;
+import me.richdev.NameNotification.Listeners.Listener_NONE;
+import me.richdev.NameNotification.Listeners.Overall;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
+import org.inventivetalent.update.spiget.spiget.SpigetUpdate;
 
 public class Main extends JavaPlugin {
 
     private static Main instance;
-
     public String message_to_op = null;
+
+    private Listener listenerCaller = null;
 
     @Override
     public void onEnable() {
@@ -23,14 +31,24 @@ public class Main extends JavaPlugin {
 
         // REGISTER LISTENERS
         getLogger().info("Loading listener...");
-        Bukkit.getServer().getPluginManager().registerEvents(new Events(), this);
+
+        Bukkit.getServer().getPluginManager().registerEvents(new Overall(), this);
+
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("DeluxeChat")) {
+            getLogger().info("We found you are using DeluxeChat, hooking with DeluxeChat...");
+            listenerCaller = new Listener_DELUXE();
+        } else {
+            listenerCaller = new Listener_NONE();
+        }
+
+        Bukkit.getServer().getPluginManager().registerEvents(listenerCaller, this);
 
         getLogger().info("Initializing updater...");
-        /*
+
         SpigetUpdate spigetUpdate = new SpigetUpdate(this, 61202);
 
 
-        spigetUpdate.setVersionComparator(VersionComparator.EQUAL);
+        spigetUpdate.setVersionComparator(VersionComparator.SEM_VER);
         spigetUpdate.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean canAutoDownload) {
@@ -47,10 +65,14 @@ public class Main extends JavaPlugin {
 
             @Override
             public void upToDate() {
+                getLogger().fine("--------------------------------");
+                getLogger().info("");
                 getLogger().info("You have the latest version :)");
+                getLogger().info("");
+                getLogger().fine("--------------------------------");
             }
         });
-*/
+
 
         loadMetrics();
 

@@ -22,12 +22,17 @@ public class Main extends JavaPlugin {
 
     private Listener listenerCaller = null;
 
+    private ConfigurationVariables configurationVariables;
+
     @Override
     public void onEnable() {
         getLogger().info("Loading NameNotification...");
         // INIT INSTANCE
         instance = this;
+        SettingsManager.getConfig().save();
         getLogger().info("Loading instance...");
+
+        configurationVariables = new ConfigurationVariables();
 
         // REGISTER LISTENERS
         getLogger().info("Loading listener...");
@@ -104,7 +109,7 @@ public class Main extends JavaPlugin {
 
                 SettingsManager.getConfig().reload();
                 if (SettingsManager.getConfig().<Boolean>get("DoNotTouchMeUnlessAChangeLogOrDeveloperTellsYou.resetConfiguration")) {
-                    SettingsManager.getConfig().reset();
+                    //SettingsManager.getConfig().reset();
                 }
 
                 sender.sendMessage(ChatColor.GREEN + "Plugin reloaded in: " + (System.currentTimeMillis() - start) + " milliseconds.");
@@ -127,4 +132,7 @@ public class Main extends JavaPlugin {
                 -> ConfigurationVariables.getInstance().NOTIFICATION_COLOR.toString()));
     }
 
+    public ConfigurationVariables getConfigurationVariables() {
+        return configurationVariables;
+    }
 }

@@ -20,7 +20,9 @@ import java.util.Set;
 public class SettingsManager {
 
     private static final SettingsManager
-            configuration = new SettingsManager("config");
+            configuration = new SettingsManager("config")
+                    ;
+
     private File file;
     private FileConfiguration config;
     private String fileName;
@@ -30,7 +32,6 @@ public class SettingsManager {
      *
      * @param fileName Name of the configuration file.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private SettingsManager(String fileName) {
         this.fileName = fileName;
         if (!Main.getInstance().getDataFolder().exists()) {
@@ -69,6 +70,31 @@ public class SettingsManager {
         return (T) config.get(path);
     }
 
+
+    /**
+     *
+     * Mostyle like {@code get} the difference is that
+     * this mode checks if the type you are searching is correct.
+     *
+     * @param path Where is the data on the config file
+     * @param type The type you are searching
+     * @param <T> The type you are searching.
+     * @return The data searched
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(String path, Class type) {
+        Object thing = this.get(path);
+
+        if (!thing.getClass().isInstance(type)) {
+            String error = "You got an error in your configuration file called %s." +
+                    "Please make sure you are writing a \"%s\" on the key called: %s"
+                    ;
+
+            error = String.format(error, file.getName(), type.getName(), path);
+            throw new ConfigurationFileException(error);
+        } else return (T) thing;
+    }
+
     /**
      * Get the "bare" keys on the configuration.
      *
@@ -92,8 +118,8 @@ public class SettingsManager {
     /**
      * Check if the configuration files contains that key.
      *
-     * @param path The key you are searching
-     * @return if the configuration contains that key.
+     * @param path
+     * @return
      */
     public boolean contains(String path) {
         return config.contains(path);
@@ -114,7 +140,6 @@ public class SettingsManager {
     /**
      * Reload the configuration.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void reload() {
         if (!Main.getInstance().getDataFolder().exists()) {
             Main.getInstance().getDataFolder().mkdir();
@@ -137,31 +162,6 @@ public class SettingsManager {
     }
 
     /**
-     * Reset the configuration.
-     */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void reset() {
-        if (!Main.getInstance().getDataFolder().exists()) {
-            Main.getInstance().getDataFolder().mkdir();
-        }
-
-        file = new File(Main.getInstance().getDataFolder(), fileName + ".yml");
-        if (file.exists())
-            file.delete();
-        try {
-            file.createNewFile();
-            InputStream is = Main.class.getResourceAsStream(fileName + ".yml");
-            if (is != null) {
-                FileUtils.copyInputStreamToFile(is, file);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        config = YamlConfiguration.loadConfiguration(file);
-    }
-
-    /**
      * Save the configuration.
      */
     public void save() {
@@ -169,6 +169,12 @@ public class SettingsManager {
             config.save(file);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private class ConfigurationFileException extends IllegalArgumentException {
+        ConfigurationFileException(String msg) {
+            super(msg);
         }
     }
 }
